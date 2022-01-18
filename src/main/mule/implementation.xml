@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="760402fe-d70e-409a-83ac-714595f5ba0b" environment="${mule.env}"/>
+	<flow name="getFlights" doc:id="614d45bb-2faf-4190-8cb8-2006bddbb6fd" >
+		<json-logger:logger doc:name="start of system layer" doc:id="5c57ba1b-33d2-4a6b-9308-618d70f092ae" config-ref="JSON_Logger_Config" message="start of system layer"/>
+		<until-successful maxRetries="${retry.attempt}" doc:name="Until Successful" doc:id="6ab1ee13-0381-4b5b-9000-f4c849a7e10c" millisBetweenRetries="${retry.time}">
+			<db:select doc:name="getAllData" doc:id="37a7fa8d-2042-4790-ad18-c7a0e12efd74" config-ref="Database_Config">
+				<db:sql ><![CDATA[SELECT * FROM flight ]]></db:sql>
+			</db:select>
+		</until-successful>
+		<ee:transform doc:name="Java to JSON" doc:id="5183596c-a449-4536-9f5d-d0a40360ebc6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="end of system layer" doc:id="0e5b8f5d-b330-4fd5-b472-d00dc7c51cc2" config-ref="JSON_Logger_Config" message="end of system layer"/>
+	</flow>
+	<flow name="bookFlights" doc:id="86576936-0004-40e2-bffe-af5a8ff7d671" >
+		<db:insert doc:name="insertingData" doc:id="4348ebb6-3cf7-483b-b9d0-ff3b321b78ab" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into BookFlight (FlightID ,Name , Mobile , Address , USERID)
+ VALUES 
+(:FlightID ,:Name , :Mobile , :Address ,:USERID)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	FlightID: payload.FlightID,
+	Name: payload.Name,
+	Mobile: payload.Mobile,
+	Address: payload.Address,
+	USERID: payload.USERID
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Success Alert" doc:id="c7e7b200-2bdd-40e6-a68f-a099215a1d2f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message":"Flight Booked Successfully",
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="Logger" doc:id="8c9b1b0b-1b88-4e60-9201-8e114fea977c" config-ref="JSON_Logger_Config" message="Data inserted successfully"/>
+	</flow>
+</mule>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	
+	<http:listener-config name="sys_flightbooking-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="747c9e96-618b-4a05-86b3-4819561d9456" >
+		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${secure::username}" password="${secure::password}" database="${db.database}" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="73b26341-dec3-4ba5-8679-ddd59e862429" file="config.yaml" />
+	<global-property doc:name="Global Property" doc:id="10074b3e-a4e7-493d-be40-476ff1fd0222" name="secure.key" value="Mulesoft" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="cc6238eb-3027-46d4-a8de-24538076045e" file="local.properties" key="${secure.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration doc:name="Configuration" doc:id="28611445-f95f-48a6-9d88-5af65e37748d" defaultErrorHandler-ref="glberrorError_Handler" />
+	<api-gateway:autodiscovery apiId="17573192" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="9b40bd9e-bda6-428c-845d-c815d080b41d" flowRef="sys_flightbooking-main" />
+	<error-handler name="glberrorError_Handler" doc:id="1700e385-46e9-4cb7-9edb-caa5f1bad81a" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="8fa83cba-a2a6-4ee0-adce-2f8c31e9e6e4" >
+			<choice doc:name="Choice" doc:id="fdd6921f-410d-497b-aa2c-2f76077b5309" >
+				<when expression="#[error.errorType.namespace=='APIKIT']" >
+					<choice doc:name="Choice" doc:id="33a879b2-6da5-4778-8056-9d112a9dc8cd" >
+						<when expression="#[error.errorType.identifier=='BAD_REQUEST']" >
+							<ee:transform doc:name="APIKIT:BAD_REQUEST" doc:id="dd9014f3-0c66-41aa-8b79-549488337c5a" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+								</ee:message>
+								<ee:variables >
+									<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+								</ee:variables>
+							</ee:transform>
+						</when>
+						<when expression='#[error.errorType.identifier== "NOT_FOUND"]' >
+							<ee:transform doc:name="APIKIT:RESOURCE_NOT_FOUND" doc:id="a40fd660-b5b3-4f08-9ba3-3fb3316655e3" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</when>
+						<when expression='#[error.errorType.identifier=="METHOD_NOT_ALLOWED"]' >
+							<ee:transform doc:name="APIKIT:METHOD_NOT_ALLOWED" doc:id="826af010-8195-4ea5-8efc-4bd9a7c5de03" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</when>
+						<when expression='#[error.errorType.identifier== "NOT_ACCEPTABLE"]' >
+							<ee:transform doc:name="APIKIT:NOT_ACCEPTABLE" doc:id="e7670aad-e6f0-46f1-ae7a-54fc54f73bee" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</when>
+						<when expression='#[error.errorType.identifier=="UNSUPPORTED_MEDIA_TYPE"]' >
+							<ee:transform doc:name="APIKIT:UNSUPPORTED_MEDIA" doc:id="ded5e9a2-2a41-454f-9bd5-228ab1f4fd82" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</when>
+						<when expression='#[error.errorType.identifier=="NOT_IMPLEMENTED"]' >
+							<ee:transform doc:name="APIKIT:NOT_IMPLEMENTED" doc:id="38f1deb4-dd97-4fd0-9f43-c94fe379b15c" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</when>
+					</choice>
+				</when>
+				<when expression='#[error.errorType.namespace =="db"]' >
+					<ee:transform doc:name="db:Any" doc:id="5554f3ff-2df2-44dd-a9f6-295671c55b3c" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "internal error"
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</when>
+			</choice>
+		</on-error-propagate>
+	</error-handler>
+	
+	
+	
+	
+</mule>
