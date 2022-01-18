@@ -1,0 +1,22 @@
+[
+    {
+      "airline": "Indigo",
+      "flightCode": "6E 7955",
+      "fromAirportCode": "AMD",
+      "toAirportCode": "PNQ",
+      "departureDate": "2021-11-11",
+      "emptySeats": 20,
+      "totalSeats": 200,
+      "planeType": "Airbus"
+    },
+    {
+      "airline": "Indigo",
+      "flightCode": "6E 7956",
+      "fromAirportCode": "BLR",
+      "toAirportCode": "HYD",
+      "departureDate": "2021-12-12",
+      "emptySeats": 24,
+      "totalSeats": 350,
+      "planeType": "Airbus"
+    }
+]

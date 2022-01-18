@@ -1,0 +1,44 @@
+#%RAML 1.0
+title: sys_flightBooking
+
+description: This API Specification is being used to search and book flights
+
+/flights:
+  get:
+    description: Retreive the list of all Flights
+    queryParameters:
+      from: 
+        required: true
+        type: string     
+      to:
+        required: true
+        type: string
+      departureDate:
+        required: false
+        type: date-only
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              !include flights-example.json
+            
+  post:
+    description: Book a Flight
+    body:
+      application/json:
+        example:
+          {
+            "FlightID" : "6E6291",
+            "Passengers": "Avatar"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Flight Booked!",
+                "Passengers Details": "Avatar",
+                "PNR": "ABC12345"
+              }

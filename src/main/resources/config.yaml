@@ -1,0 +1,15 @@
+retry:
+  attempt: "5"
+  time: "60000"
+  
+json.logger.application.name: "sys_flightbooking"
+json.logger.application.version: "1.0"
+mule.env: "dev"
+
+db:
+  host: "sql6.freesqldatabase.com"
+  port: "3306"
+  database: "sql6464925"
+  
+http:
+  port: "8081"
