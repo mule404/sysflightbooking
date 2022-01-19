@@ -47,6 +47,8 @@
 						<businessGroup>apisero</businessGroup>
 						<workerType>micro</workerType>
 						<workers>1</workers>
+						
+						
 						<properties>
 							<anypoint.platform.config.analytics.agent.enabled>false</anypoint.platform.config.analytics.agent.enabled>
 							<anypoint.platform.client_id>ef25bcfe7b284ad99495777eea524ff1</anypoint.platform.client_id>
