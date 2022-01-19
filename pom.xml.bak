@@ -37,20 +37,6 @@
 							<artifactId>mysql-connector-java</artifactId>
 						</sharedLibrary>
 					</sharedLibraries>
-					<cloudHubDeployment>
-		<uri>https://anypoint.mulesoft.com</uri>
-		<muleVersion>4.4.0</muleVersion>
-		<username>apiseroB48</username>
-		<password>apiseroB48</password>
-		
-		<environment>Sandbox</environment>
-		<applicationName>sys_flightbooking_1</applicationName>
-		<businessGroup>apisero</businessGroup>
-		<workerType>micro</workerType>
-		<workers>0.1</workers>
-		<objectStoreV2>true</objectStoreV2>
-	</cloudHubDeployment>
-<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
