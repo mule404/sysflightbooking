@@ -43,7 +43,7 @@
 						<username>apiseroB48</username>
 						<password>apiseroB48</password>
 						<environment>Sandbox</environment>
-						<applicationName>sys_flightbooking_1</applicationName>
+						<applicationName>sysflightbook</applicationName>
 						<businessGroup>apisero</businessGroup>
 						<workerType>micro</workerType>
 						<workers>1</workers>
