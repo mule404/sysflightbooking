@@ -38,19 +38,23 @@
 						</sharedLibrary>
 					</sharedLibraries>
 					<cloudHubDeployment>
-		<uri>https://anypoint.mulesoft.com</uri>
-		<muleVersion>4.4.0</muleVersion>
-		<username>apiseroB48</username>
-		<password>apiseroB48</password>
-		
-		<environment>Sandbox</environment>
-		<applicationName>sys_flightbooking_1</applicationName>
-		<businessGroup>apisero</businessGroup>
-		<workerType>micro</workerType>
-		<workers>0.1</workers>
-		<objectStoreV2>true</objectStoreV2>
-	</cloudHubDeployment>
-<classifier>mule-application</classifier>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>4.4.0</muleVersion>
+						<username>apiseroB48</username>
+						<password>apiseroB48</password>
+						<environment>Sandbox</environment>
+						<applicationName>sys_flightbooking_1</applicationName>
+						<businessGroup>apisero</businessGroup>
+						<workerType>micro</workerType>
+						<workers>1</workers>
+						<properties>
+							<anypoint.platform.config.analytics.agent.enabled>false</anypoint.platform.config.analytics.agent.enabled>
+							<anypoint.platform.client_id>ef25bcfe7b284ad99495777eea524ff1</anypoint.platform.client_id>
+							<anypoint.platform.client_secret>4a58691D4AB545629D6674AB736EA343</anypoint.platform.client_secret>
+						</properties>
+						<objectStoreV2>true</objectStoreV2>
+					</cloudHubDeployment>
+					<classifier>mule-application</classifier>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -69,7 +73,11 @@
 				</executions>
 				<configuration>
 					<coverage>
-						<runCoverage>true</runCoverage>
+					<ignoreFiles>
+	  <ignoreFile>implementation-suite.xml</ignoreFile>
+	  <ignoreFile>sys_flightbooking-suite.xml</ignoreFile>
+  </ignoreFiles>
+						
 						<formats>
 							<format>html</format>
 						</formats>
@@ -101,12 +109,6 @@
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-amqp-connector</artifactId>
 			<version>1.6.0</version>
-			<classifier>mule-plugin</classifier>
-		</dependency>
-		<dependency>
-			<groupId>264f9dfe-75a4-49a2-9cb9-7dcaf8bb0f55</groupId>
-			<artifactId>json-logger</artifactId>
-			<version>2.0.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
@@ -145,6 +147,12 @@
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.5.8</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>ab2b2951-4b11-4a11-99b1-2b73b6a55e78</groupId>
+			<artifactId>json-logger</artifactId>
+			<version>2.0.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
